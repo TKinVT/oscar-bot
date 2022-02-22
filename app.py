@@ -12,6 +12,10 @@ import meow
 
 load_dotenv()
 
+COUNTRY_SONG_URL = 'https://y7j5u0qt6f.execute-api.us-east-1.amazonaws.com/dev'
+DM_CHANNEL = 'UG9RLD8FL'
+FOOD_THEORY_URL = 'https://foodtheory.tkinvt.com/categorize'
+
 app = Flask(__name__)
 
 bolt_app = App(
@@ -41,13 +45,20 @@ def submit_food(body, ack, respond):
     food_name = food_name.lower()
 
     respond(delete_original=True)
-    requests.post('https://foodtheory.tkinvt.com/categorize', data={'food': food_name, 'category': category})
+    requests.post(FOOD_THEORY_URL, data={'food': food_name, 'category': category})
 
 
 @bolt_app.action('cancel_food')
 def cancel_food(ack, respond):
     ack()
     respond(delete_original=True)
+
+
+@bolt_app.command('/country-song')
+def country_song(ack, respond):
+    ack('Cooking up a song...')
+    song = requests.get(COUNTRY_SONG_URL)
+    respond(f"```{song.text}```")
 
 
 @bolt_app.command('/oscar')
@@ -66,7 +77,7 @@ def slack_events():
 def food():
     food_name = request.form['food']
     blocks = food_theory.blocks.food_question(food_name)
-    bolt_app.client.chat_postMessage(channel='UG9RLD8FL', blocks=blocks, text=f"Categorize *{food_name}*")
+    bolt_app.client.chat_postMessage(channel=DM_CHANNEL, blocks=blocks, text=f"Categorize *{food_name}*")
     return ""
 
 
