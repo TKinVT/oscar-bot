@@ -12,7 +12,7 @@ import meow
 
 load_dotenv()
 
-COUNTRY_SONG_URL = 'https://y7j5u0qt6f.execute-api.us-east-1.amazonaws.com/dev'
+COUNTRY_SONG_URL = os.getenv('COUNTRY_SONG_URL')
 DM_CHANNEL = 'UG9RLD8FL'
 FOOD_THEORY_URL = 'https://foodtheory.tkinvt.com/categorize'
 
